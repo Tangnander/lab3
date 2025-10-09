@@ -102,9 +102,11 @@ public class MainTab extends JTabbedPane {
         addAlarmButton.setBounds(300, 40, 120, 30);
         alarmTab.add(addAlarmButton);
 
-        JLabel statusLabel = new JLabel("");
-        statusLabel.setBounds(10, 90, 400, 25);
-        alarmTab.add(statusLabel);
+         
+        JTextArea statusArea = new JTextArea();
+        statusArea.setBounds(10, 90, 400, 150);
+        statusArea.setEditable(false);             // användaren kan inte skriva i den
+        alarmTab.add(statusArea);
 
         // Lägg till lyssnare för knappen
         addAlarmButton.addActionListener(e -> {
@@ -116,11 +118,12 @@ public class MainTab extends JTabbedPane {
             TimeType alarmTime = new Time(day, hour, minute, second);
             controller.addAlarm(alarmTime);
 
-            statusLabel.setText("Alarm added for day " + (day + 1) + " " + hour + ":" + minute + ":" + second);
+            statusArea.append("Alarm added for day " + (day + 1) + " " + hour + ":" + minute + ":" + second + "\n");
         });
 
         return alarmTab;
     }
 
 
+}
 }
