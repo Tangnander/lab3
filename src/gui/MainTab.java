@@ -1,20 +1,17 @@
 package gui;
 
+import time.Time;
+import time.TimeType;
+
 import javax.swing.*;
 import java.awt.*;
-
-import time.Time; 
-import time.TimeType;
 
 public class MainTab extends JTabbedPane {
 
     JLabel currentTime = new JLabel("00:00:00", SwingConstants.CENTER);
-    ClockController controller;
+    ClockController controller = new ClockController(currentTime);
 
     public MainTab() {
-    	
-        controller = new ClockController(currentTime);
-
         this.addTab("Clock", createClockTab());
         this.addTab("Alarm", createAlarmTab());
     }
@@ -44,7 +41,7 @@ public class MainTab extends JTabbedPane {
         stopClock.addActionListener(e -> controller.stopClock());
         resetClock.addActionListener(e -> controller.resetClock());
 
-        JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(0, 0, 6, 1));      // dag: 0-6
+        JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 7, 1));      // dag: 0-6
         JSpinner hourSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 23, 1));    // timme: 0-23
         JSpinner minuteSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));  // minut: 0-59
         JSpinner secondSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));  // sekund: 0-59
@@ -63,9 +60,9 @@ public class MainTab extends JTabbedPane {
         clockTab.add(minuteSpinner);
         clockTab.add(secondSpinner);
         clockTab.add(setTimeButton);
-        
+
         setTimeButton.addActionListener(e -> {
-            int day = (int) daySpinner.getValue();
+            int day = ((int) daySpinner.getValue()) - 1;
             int hour = (int) hourSpinner.getValue();
             int minute = (int) minuteSpinner.getValue();
             int second = (int) secondSpinner.getValue();
@@ -75,25 +72,22 @@ public class MainTab extends JTabbedPane {
             // Skapa Time-objekt och använd setTime-metoden
             TimeType newTime = new Time(day, hour, minute, second);
             controller.setTime(newTime);
-
         });
-
         return clockTab;
     }
 
     private JPanel createAlarmTab() {
-    	 JButton startClock = new JButton("Start Clock");
-         JButton stopClock = new JButton("Stop Clock");
-         JButton resetClock = new JButton("Reset Clock");
+        JButton startClock = new JButton("Start Clock");
+        JButton stopClock = new JButton("Stop Clock");
+        JButton resetClock = new JButton("Reset Clock");
 
-         JPanel alarmTab = new JPanel();
+        JPanel alarmTab = new JPanel();
 
-         alarmTab.add(startClock);
-         alarmTab.add(stopClock);
-         alarmTab.add(resetClock);
+        alarmTab.add(startClock);
+        alarmTab.add(stopClock);
+        alarmTab.add(resetClock);
 
-         return alarmTab;
+        return alarmTab;
     }
-}
 
 }

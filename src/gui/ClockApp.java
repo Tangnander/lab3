@@ -5,10 +5,7 @@ import javax.swing.*;
 public class ClockApp {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
-            frame.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new MainFrame());
     }
 
 }
