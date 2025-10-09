@@ -1,17 +1,20 @@
 package gui;
 
 import clock.WeekAlarmClock;
+import time.Time;
 import time.TimeType;
+import alarm.Alarm;
 
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
-public  class ClockController {
+import javax.swing.*;
+
+public class ClockController {
 
     private boolean clockRunning = false;
     private WeekAlarmClock alarmClock = new WeekAlarmClock();
     private Thread clockThread;
     private JLabel timeLabel; // JLabel från GUI
+    Time newTime = new Time(0, 0, 0, 0);
 
     public ClockController(JLabel timeLabel) {
         this.timeLabel = timeLabel;
@@ -19,13 +22,14 @@ public  class ClockController {
     }
 
     public void startClock() {
-        if (clockRunning) return; 
+        if (clockRunning) return;
         clockRunning = true;
 
         clockThread = new Thread(() -> {
             while (clockRunning) {
                 alarmClock.tickTack();
                 updateLabel();
+
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -42,18 +46,21 @@ public  class ClockController {
 
     public void resetClock() {
         stopClock();
-        alarmClock = new WeekAlarmClock(); // skapa en ny klocka
+        alarmClock.setTime(newTime);
         updateLabel();
     }
-    
+
     public void setTime(TimeType time) {
         alarmClock.setTime(time);
         updateLabel();
     }
-
-
+    
+    public void addAlarm(TimeType time) {
+        alarmClock.addAlarm(new Alarm(time));
+    }
 
     private void updateLabel() {
         SwingUtilities.invokeLater(() -> timeLabel.setText(alarmClock.toString()));
     }
+
 }
