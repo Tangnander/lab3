@@ -58,6 +58,16 @@ public class ClockController {
     public void addAlarm(TimeType time) {
         alarmClock.addAlarm(new Alarm(time));
     }
+    
+    public void removeAlarm(TimeType time) {
+        // Tar bort ett specifikt alarm baserat på tiden
+        alarmClock.removeAlarm(new alarm.Alarm(time));
+    }
+
+    public void removeAllAlarms() {
+        // Tar bort alla alarm
+        alarmClock.removeAllAlarms();
+    }
 
     private void updateLabel() {
         SwingUtilities.invokeLater(() -> timeLabel.setText(alarmClock.toString()));
