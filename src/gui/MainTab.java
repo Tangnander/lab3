@@ -115,13 +115,13 @@ public class MainTab extends JTabbedPane {
         alarmTab.add(clearAllButton);
         alarmTab.add(alarmScrollPane);
 
-        // ---- Hjälpmetod för snygg text ----
+        // Hjälpmetod 
         String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
         java.util.function.Function<TimeType, String> formatAlarmText = time ->
                 days[time.getDay()] + " " + String.format("%02d:%02d:%02d",
                         time.getHour(), time.getMinute(), time.getSecond());
 
-        // --- Lyssnare ---
+        // Lyssnare 
 
         // Lägg till alarm
         addAlarmButton.addActionListener(e -> {
