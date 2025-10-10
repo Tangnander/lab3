@@ -1,15 +1,16 @@
 package gui;
 
+import alarm.AlarmType;
 import time.Time;
 import time.TimeType;
 
 import javax.swing.*;
-
-import alarm.AlarmType;
-
 import java.awt.*;
 
 public class MainTab extends JTabbedPane {
+
+    static JButton snoozeAlarm = new JButton("Snooze Alarm");
+    static JLabel alarmLabel = new JLabel("Wake up!", SwingConstants.CENTER);
 
     JLabel currentTime = new JLabel("00:00:00", SwingConstants.CENTER);
     ClockController controller = new ClockController(currentTime);
@@ -27,13 +28,25 @@ public class MainTab extends JTabbedPane {
         JButton stopClock = new JButton("Stop Clock");
         JButton resetClock = new JButton("Reset Clock");
 
+
         startClock.setBounds(10, 10, 320, 50);
         stopClock.setBounds(340, 10, 320, 50);
         resetClock.setBounds(670, 10, 320, 50);
+        snoozeAlarm.setBounds(10, 800, 980, 100);
+
+        alarmLabel.setFont(new Font("FreeMono", Font.PLAIN, 100));
+        alarmLabel.setForeground(Color.RED);
+        alarmLabel.setBounds(10, 500, 980, 200);
+        alarmLabel.setVisible(false);
+
+        clockTab.add(alarmLabel);
+
+        snoozeAlarm.setVisible(false);
 
         clockTab.add(startClock);
         clockTab.add(stopClock);
         clockTab.add(resetClock);
+        clockTab.add(snoozeAlarm);
 
         currentTime.setFont(new Font("FreeMono", Font.PLAIN, 100));
         currentTime.setBounds(10, 70, 980, 200);
@@ -43,6 +56,12 @@ public class MainTab extends JTabbedPane {
         startClock.addActionListener(e -> controller.startClock());
         stopClock.addActionListener(e -> controller.stopClock());
         resetClock.addActionListener(e -> controller.resetClock());
+        snoozeAlarm.addActionListener(e -> {
+            controller.snoozeAlarm();
+            snoozeAlarm.setVisible(false);
+            alarmLabel.setVisible(false);
+
+        });
 
         JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 7, 1));      // dag: 0-6
         JSpinner hourSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 23, 1));    // timme: 0-23
@@ -122,16 +141,10 @@ public class MainTab extends JTabbedPane {
         java.util.function.Function<TimeType, String> formatAlarmText = time -> {
             Time t = (Time) time;
             String dayName = t.toString().substring(0, 3);
-            return String.format("%s %02d:%02d:%02d",
-                    dayName,
-                    t.getHour(),
-                    t.getMinute(),
-                    t.getSecond());
+            return String.format("%s %02d:%02d:%02d", dayName, t.getHour(), t.getMinute(), t.getSecond());
         };
 
-
-        // Lyssnare 
-
+        // Lyssnare
         // Lägg till alarm
         addAlarmButton.addActionListener(e -> {
             int day = (int) daySpinner.getValue() - 1;
@@ -155,15 +168,7 @@ public class MainTab extends JTabbedPane {
                 return;
             }
 
-            Object selected = JOptionPane.showInputDialog(
-                    null,
-                    "Select alarm to remove:",
-                    "Remove Alarm",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    alarmListModel.toArray(),
-                    alarmListModel.get(0)
-            );
+            Object selected = JOptionPane.showInputDialog(null, "Select alarm to remove:", "Remove Alarm", JOptionPane.PLAIN_MESSAGE, null, alarmListModel.toArray(), alarmListModel.get(0));
 
             if (selected != null) {
                 String selectedAlarm = selected.toString();
@@ -186,9 +191,7 @@ public class MainTab extends JTabbedPane {
             controller.removeAllAlarms();
             alarmListModel.clear();
         });
-
         return alarmTab;
     }
-
 
 }

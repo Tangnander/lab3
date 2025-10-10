@@ -1,10 +1,10 @@
 package alarm;
 
+import gui.ClockController;
 import time.TimeType;
 
 public class Alarm implements AlarmType {
 
-    public boolean alarmHasRung = false;
     private boolean active;
     private TimeType time;
 
@@ -31,7 +31,7 @@ public class Alarm implements AlarmType {
     @Override
     public void doAlarm() {
         if (active) {
-            System.out.println("Alarm triggat!");
+            ClockController.alarmTriggered = true;
         }
     }
 

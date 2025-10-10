@@ -1,22 +1,21 @@
 package gui;
 
+import alarm.Alarm;
+import alarm.AlarmType;
 import clock.WeekAlarmClock;
 import time.Time;
 import time.TimeType;
-import alarm.Alarm;
-import alarm.AlarmType;
-
-import java.util.Collection;
 
 import javax.swing.*;
+import java.util.Collection;
 
 public class ClockController {
 
+    public static boolean alarmTriggered;
     private boolean clockRunning = false;
-    private WeekAlarmClock alarmClock = new WeekAlarmClock();
-    private Thread clockThread;
-    private JLabel timeLabel; // JLabel från GUI
-    Time newTime = new Time(0, 0, 0, 0);
+    private final WeekAlarmClock alarmClock = new WeekAlarmClock();
+    private final JLabel timeLabel; // JLabel från GUI
+    Time resetNewTime = new Time(0, 0, 0, 0);
 
     public ClockController(JLabel timeLabel) {
         this.timeLabel = timeLabel;
@@ -24,6 +23,8 @@ public class ClockController {
     }
 
     public void startClock() {
+        Thread clockThread;
+
         if (clockRunning) return;
         clockRunning = true;
 
@@ -31,7 +32,7 @@ public class ClockController {
             while (clockRunning) {
                 alarmClock.tickTack();
                 updateLabel();
-
+                checkForTriggeredAlarm();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -48,7 +49,7 @@ public class ClockController {
 
     public void resetClock() {
         stopClock();
-        alarmClock.setTime(newTime);
+        alarmClock.setTime(resetNewTime);
         updateLabel();
     }
 
@@ -77,6 +78,17 @@ public class ClockController {
 
     private void updateLabel() {
         SwingUtilities.invokeLater(() -> timeLabel.setText(alarmClock.toString()));
+    }
+
+    public void snoozeAlarm() {
+        alarmTriggered = false;
+    }
+
+    public void checkForTriggeredAlarm() {
+        if (alarmTriggered) {
+            MainTab.alarmLabel.setVisible(true);
+            MainTab.snoozeAlarm.setVisible(true);
+        }
     }
 
 }
