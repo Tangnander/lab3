@@ -4,7 +4,9 @@ import clock.WeekAlarmClock;
 import time.Time;
 import time.TimeType;
 import alarm.Alarm;
+import alarm.AlarmType;
 
+import java.util.Collection;
 
 import javax.swing.*;
 
@@ -67,6 +69,10 @@ public class ClockController {
     public void removeAllAlarms() {
         // Tar bort alla alarm
         alarmClock.removeAllAlarms();
+    }
+    
+    public Collection<AlarmType> getAlarms() {
+        return alarmClock.getAlarms();
     }
 
     private void updateLabel() {
