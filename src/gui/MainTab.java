@@ -4,6 +4,9 @@ import time.Time;
 import time.TimeType;
 
 import javax.swing.*;
+
+import alarm.AlarmType;
+
 import java.awt.*;
 
 public class MainTab extends JTabbedPane {
@@ -115,11 +118,26 @@ public class MainTab extends JTabbedPane {
         alarmTab.add(clearAllButton);
         alarmTab.add(alarmScrollPane);
 
-        // Hjälpmetod 
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        java.util.function.Function<TimeType, String> formatAlarmText = time ->
-                days[time.getDay()] + " " + String.format("%02d:%02d:%02d",
-                        time.getHour(), time.getMinute(), time.getSecond());
+        // metod så att det står t.ex Mon 00:00:00 ist för 1 00:00:00
+        java.util.function.Function<TimeType, String> formatAlarmText = time -> {
+            // Kasta till Time för att kunna använda hasDay() och dayNames
+            Time t = (Time) time;
+
+            if (t.hasDay()) {
+                // Ta de tre första bokstäverna från toString() som ger Mon, Tue etc.
+                String dayName = t.toString().substring(0, 3);
+                return String.format("%s %02d:%02d:%02d",
+                        dayName,
+                        t.getHour(),
+                        t.getMinute(),
+                        t.getSecond());
+            } else {
+                return String.format("%02d:%02d:%02d",
+                        t.getHour(),
+                        t.getMinute(),
+                        t.getSecond());
+            }
+        };
 
         // Lyssnare 
 
@@ -161,14 +179,11 @@ public class MainTab extends JTabbedPane {
                 alarmListModel.removeElement(selectedAlarm);
 
                 // Parsar tillbaka till TimeType för att ta bort korrekt alarm
-                for (int i = 0; i < days.length; i++) {
-                    if (selectedAlarm.startsWith(days[i])) {
-                        String[] parts = selectedAlarm.split(" ")[1].split(":");
-                        int hour = Integer.parseInt(parts[0]);
-                        int minute = Integer.parseInt(parts[1]);
-                        int second = Integer.parseInt(parts[2]);
-                        TimeType timeToRemove = new Time(i, hour, minute, second);
-                        controller.removeAlarm(timeToRemove);
+                // Parsar tillbaka till TimeType genom att jämföra med alla alarm
+                for (AlarmType alarm : controller.getAlarms()) {
+                    String alarmText = formatAlarmText.apply(alarm.getTime());
+                    if (alarmText.equals(selectedAlarm)) {
+                        controller.removeAlarm(alarm.getTime());
                         break;
                     }
                 }
