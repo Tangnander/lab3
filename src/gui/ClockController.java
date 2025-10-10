@@ -3,6 +3,10 @@ package gui;
 import clock.WeekAlarmClock;
 import time.Time;
 import time.TimeType;
+import alarm.Alarm;
+import alarm.AlarmType;
+
+import java.util.Collection;
 
 import javax.swing.*;
 
@@ -27,6 +31,7 @@ public class ClockController {
             while (clockRunning) {
                 alarmClock.tickTack();
                 updateLabel();
+
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -50,6 +55,24 @@ public class ClockController {
     public void setTime(TimeType time) {
         alarmClock.setTime(time);
         updateLabel();
+    }
+
+    public void addAlarm(TimeType time) {
+        alarmClock.addAlarm(new Alarm(time));
+    }
+
+    public void removeAlarm(TimeType time) {
+        // Tar bort ett specifikt alarm baserat på tiden
+        alarmClock.removeAlarm(new alarm.Alarm(time));
+    }
+
+    public void removeAllAlarms() {
+        // Tar bort alla alarm
+        alarmClock.removeAllAlarms();
+    }
+
+    public Collection<AlarmType> getAlarms() {
+        return alarmClock.getAlarms();
     }
 
     private void updateLabel() {

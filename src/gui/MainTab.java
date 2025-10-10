@@ -4,6 +4,9 @@ import time.Time;
 import time.TimeType;
 
 import javax.swing.*;
+
+import alarm.AlarmType;
+
 import java.awt.*;
 
 public class MainTab extends JTabbedPane {
@@ -77,17 +80,115 @@ public class MainTab extends JTabbedPane {
     }
 
     private JPanel createAlarmTab() {
-        JButton startClock = new JButton("Start Clock");
-        JButton stopClock = new JButton("Stop Clock");
-        JButton resetClock = new JButton("Reset Clock");
-
         JPanel alarmTab = new JPanel();
+        alarmTab.setLayout(null);
 
-        alarmTab.add(startClock);
-        alarmTab.add(stopClock);
-        alarmTab.add(resetClock);
+        // Spinners för tid
+        JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 7, 1));
+        JSpinner hourSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 23, 1));
+        JSpinner minuteSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));
+        JSpinner secondSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));
+
+        JButton addAlarmButton = new JButton("Add Alarm");
+        JButton removeAlarmButton = new JButton("Remove Alarm");
+        JButton clearAllButton = new JButton("Remove All Alarms");
+
+        // Lista över aktiva alarm
+        DefaultListModel<String> alarmListModel = new DefaultListModel<>();
+        JList<String> alarmList = new JList<>(alarmListModel);
+        JScrollPane alarmScrollPane = new JScrollPane(alarmList);
+        alarmScrollPane.setBounds(10, 170, 400, 200);
+
+        // Placering
+        daySpinner.setBounds(10, 30, 60, 30);
+        hourSpinner.setBounds(80, 30, 60, 30);
+        minuteSpinner.setBounds(150, 30, 60, 30);
+        secondSpinner.setBounds(220, 30, 60, 30);
+
+        addAlarmButton.setBounds(10, 80, 150, 30);
+        removeAlarmButton.setBounds(170, 80, 150, 30);
+        clearAllButton.setBounds(10, 120, 310, 30);
+
+        alarmTab.add(daySpinner);
+        alarmTab.add(hourSpinner);
+        alarmTab.add(minuteSpinner);
+        alarmTab.add(secondSpinner);
+        alarmTab.add(addAlarmButton);
+        alarmTab.add(removeAlarmButton);
+        alarmTab.add(clearAllButton);
+        alarmTab.add(alarmScrollPane);
+
+        // metod så att det står t.ex Mon 00:00:00 ist för 1 00:00:00
+        java.util.function.Function<TimeType, String> formatAlarmText = time -> {
+            Time t = (Time) time;
+            String dayName = t.toString().substring(0, 3);
+            return String.format("%s %02d:%02d:%02d",
+                    dayName,
+                    t.getHour(),
+                    t.getMinute(),
+                    t.getSecond());
+        };
+
+
+        // Lyssnare 
+
+        // Lägg till alarm
+        addAlarmButton.addActionListener(e -> {
+            int day = (int) daySpinner.getValue() - 1;
+            int hour = (int) hourSpinner.getValue();
+            int minute = (int) minuteSpinner.getValue();
+            int second = (int) secondSpinner.getValue();
+
+            TimeType alarmTime = new Time(day, hour, minute, second);
+            controller.addAlarm(alarmTime);
+
+            String alarmText = formatAlarmText.apply(alarmTime);
+            if (!alarmListModel.contains(alarmText)) {
+                alarmListModel.addElement(alarmText);
+            }
+        });
+
+        // Ta bort specifikt alarm via popup
+        removeAlarmButton.addActionListener(e -> {
+            if (alarmListModel.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No alarms to remove.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            Object selected = JOptionPane.showInputDialog(
+                    null,
+                    "Select alarm to remove:",
+                    "Remove Alarm",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    alarmListModel.toArray(),
+                    alarmListModel.get(0)
+            );
+
+            if (selected != null) {
+                String selectedAlarm = selected.toString();
+                alarmListModel.removeElement(selectedAlarm);
+
+                // Parsar tillbaka till TimeType för att ta bort korrekt alarm
+                // Parsar tillbaka till TimeType genom att jämföra med alla alarm
+                for (AlarmType alarm : controller.getAlarms()) {
+                    String alarmText = formatAlarmText.apply(alarm.getTime());
+                    if (alarmText.equals(selectedAlarm)) {
+                        controller.removeAlarm(alarm.getTime());
+                        break;
+                    }
+                }
+            }
+        });
+
+        // Ta bort alla alarm
+        clearAllButton.addActionListener(e -> {
+            controller.removeAllAlarms();
+            alarmListModel.clear();
+        });
 
         return alarmTab;
     }
+
 
 }
