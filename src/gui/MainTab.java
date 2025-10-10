@@ -120,24 +120,15 @@ public class MainTab extends JTabbedPane {
 
         // metod så att det står t.ex Mon 00:00:00 ist för 1 00:00:00
         java.util.function.Function<TimeType, String> formatAlarmText = time -> {
-            // Kasta till Time för att kunna använda hasDay() och dayNames
             Time t = (Time) time;
-
-            if (t.hasDay()) {
-                // Ta de tre första bokstäverna från toString() som ger Mon, Tue etc.
-                String dayName = t.toString().substring(0, 3);
-                return String.format("%s %02d:%02d:%02d",
-                        dayName,
-                        t.getHour(),
-                        t.getMinute(),
-                        t.getSecond());
-            } else {
-                return String.format("%02d:%02d:%02d",
-                        t.getHour(),
-                        t.getMinute(),
-                        t.getSecond());
-            }
+            String dayName = t.toString().substring(0, 3);
+            return String.format("%s %02d:%02d:%02d",
+            		dayName,
+                    t.getHour(),
+                    t.getMinute(),
+                    t.getSecond());
         };
+
 
         // Lyssnare 
 
