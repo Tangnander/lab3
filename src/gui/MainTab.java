@@ -55,12 +55,12 @@ public class MainTab extends JTabbedPane {
         clockTab.add(snoozeAlarm);
 
         currentTime.setFont(new Font("FreeMono", Font.PLAIN, 100));
-        currentTime.setBounds(10, 70, 980, 200);
+        currentTime.setBounds(10, 120, 980, 100);
         clockTab.add(currentTime);
 
         analogClock.setBounds(200, 220, 600, 600);
         analogWeekDay.setFont(new Font("FreeMono", Font.PLAIN, 100));
-        analogWeekDay.setBounds(10, 70, 980, 200);
+        analogWeekDay.setBounds(10, 120, 980, 100);
 
         clockTab.add(analogClock);
         clockTab.add(analogWeekDay);
@@ -79,6 +79,16 @@ public class MainTab extends JTabbedPane {
 
         //Clicking on the analog clock hides it and shows the digital instead
         analogClock.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                analogClock.setVisible(false);
+                analogWeekDay.setVisible(false);
+                currentTime.setVisible(true);
+            }
+        });
+
+        //Clicking on analog week day hides it an shows the digital instead.
+        analogWeekDay.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 analogClock.setVisible(false);
