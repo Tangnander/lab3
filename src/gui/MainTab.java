@@ -6,11 +6,15 @@ import time.TimeType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainTab extends JTabbedPane {
 
     static JButton snoozeAlarm = new JButton("Snooze Alarm");
     static JLabel alarmLabel = new JLabel("Wake up!", SwingConstants.CENTER);
+    static JLabel analogWeekDay = new JLabel("", SwingConstants.CENTER);
+    static AnalogClock analogClock = new AnalogClock();
 
     JLabel currentTime = new JLabel("00:00:00", SwingConstants.CENTER);
     ClockController controller = new ClockController(currentTime);
@@ -23,20 +27,22 @@ public class MainTab extends JTabbedPane {
     private JPanel createClockTab() {
         JPanel clockTab = new JPanel();
         clockTab.setLayout(null);
+        analogClock.setLayout(null);
+
+        clockTab.setBackground(Color.WHITE);
 
         JButton startClock = new JButton("Start Clock");
         JButton stopClock = new JButton("Stop Clock");
         JButton resetClock = new JButton("Reset Clock");
 
-
         startClock.setBounds(10, 10, 320, 50);
         stopClock.setBounds(340, 10, 320, 50);
         resetClock.setBounds(670, 10, 320, 50);
-        snoozeAlarm.setBounds(10, 800, 980, 100);
+        snoozeAlarm.setBounds(10, 920, 980, 50);
 
         alarmLabel.setFont(new Font("FreeMono", Font.PLAIN, 100));
         alarmLabel.setForeground(Color.RED);
-        alarmLabel.setBounds(10, 500, 980, 200);
+        alarmLabel.setBounds(10, 810, 980, 100);
         alarmLabel.setVisible(false);
 
         clockTab.add(alarmLabel);
@@ -52,15 +58,41 @@ public class MainTab extends JTabbedPane {
         currentTime.setBounds(10, 70, 980, 200);
         clockTab.add(currentTime);
 
+        analogClock.setBounds(200, 220, 600, 600);
+        analogWeekDay.setFont(new Font("FreeMono", Font.PLAIN, 100));
+        analogWeekDay.setBounds(10, 70, 980, 200);
+
+        clockTab.add(analogClock);
+        clockTab.add(analogWeekDay);
+        analogWeekDay.setVisible(false);
+        analogClock.setVisible(false);
+
+        //Clicking on the digital hides it and shows the analog instead
+        currentTime.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                currentTime.setVisible(false);
+                analogClock.setVisible(true);
+                analogWeekDay.setVisible(true);
+            }
+        });
+
+        //Clicking on the analog clock hides it and shows the digital instead
+        analogClock.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                analogClock.setVisible(false);
+                analogWeekDay.setVisible(false);
+                currentTime.setVisible(true);
+            }
+        });
+
         // Anonyma lyssnare kopplade till controllern
         startClock.addActionListener(e -> controller.startClock());
         stopClock.addActionListener(e -> controller.stopClock());
         resetClock.addActionListener(e -> controller.resetClock());
         snoozeAlarm.addActionListener(e -> {
             controller.snoozeAlarm();
-            snoozeAlarm.setVisible(false);
-            alarmLabel.setVisible(false);
-
         });
 
         JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 7, 1));      // dag: 0-6
@@ -71,11 +103,11 @@ public class MainTab extends JTabbedPane {
         JButton setTimeButton = new JButton("Set Time");
 
         // Placera spinners och knapp i panelen
-        daySpinner.setBounds(10, 300, 60, 30);
-        hourSpinner.setBounds(80, 300, 60, 30);
-        minuteSpinner.setBounds(150, 300, 60, 30);
-        secondSpinner.setBounds(220, 300, 60, 30);
-        setTimeButton.setBounds(300, 300, 120, 30);
+        daySpinner.setBounds(10, 80, 60, 30);
+        hourSpinner.setBounds(80, 80, 60, 30);
+        minuteSpinner.setBounds(150, 80, 60, 30);
+        secondSpinner.setBounds(220, 80, 60, 30);
+        setTimeButton.setBounds(300, 80, 120, 30);
 
         clockTab.add(daySpinner);
         clockTab.add(hourSpinner);
@@ -101,6 +133,8 @@ public class MainTab extends JTabbedPane {
     private JPanel createAlarmTab() {
         JPanel alarmTab = new JPanel();
         alarmTab.setLayout(null);
+
+        alarmTab.setBackground(Color.WHITE);
 
         // Spinners för tid
         JSpinner daySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 7, 1));

@@ -7,7 +7,6 @@ public class MainFrame extends JFrame {
     JTabbedPane mainTab = new MainTab();
 
     public MainFrame() {
-
         setTitle("Clock App");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);

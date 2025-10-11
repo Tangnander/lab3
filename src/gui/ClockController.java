@@ -12,10 +12,11 @@ import java.util.Collection;
 public class ClockController {
 
     public static boolean alarmTriggered;
+
+    Time resetNewTime = new Time(0, 0, 0, 0);
     private boolean clockRunning = false;
     private final WeekAlarmClock alarmClock = new WeekAlarmClock();
     private final JLabel timeLabel; // JLabel från GUI
-    Time resetNewTime = new Time(0, 0, 0, 0);
 
     public ClockController(JLabel timeLabel) {
         this.timeLabel = timeLabel;
@@ -51,6 +52,7 @@ public class ClockController {
         stopClock();
         alarmClock.setTime(resetNewTime);
         updateLabel();
+        snoozeAlarm();
     }
 
     public void setTime(TimeType time) {
@@ -77,11 +79,25 @@ public class ClockController {
     }
 
     private void updateLabel() {
-        SwingUtilities.invokeLater(() -> timeLabel.setText(alarmClock.toString()));
+        SwingUtilities.invokeLater(() -> {
+            timeLabel.setText(alarmClock.toString());
+
+            TimeType timeSplit = alarmClock.getTime();
+
+            //Resets the analog clock and updates it on MainTab.
+            AnalogClock.days = timeSplit.getDay();
+            AnalogClock.hours = timeSplit.getHour();
+            AnalogClock.minutes = timeSplit.getMinute();
+            AnalogClock.seconds = timeSplit.getSecond();
+            MainTab.analogWeekDay.setText(timeSplit.toString().substring(0, 3));
+            MainTab.analogClock.repaint();
+        });
     }
 
     public void snoozeAlarm() {
         alarmTriggered = false;
+        MainTab.alarmLabel.setVisible(false);
+        MainTab.snoozeAlarm.setVisible(false);
     }
 
     public void checkForTriggeredAlarm() {
