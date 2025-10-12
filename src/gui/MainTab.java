@@ -157,6 +157,8 @@ public class MainTab extends JTabbedPane {
         JButton clearAllButton = new JButton("Remove All Alarms");
 
         // Lista över aktiva alarm
+        JLabel activeAlarmsLabel = new JLabel("Active Alarms");
+        activeAlarmsLabel.setBounds(10, 180, 200, 20); 
         DefaultListModel<String> alarmListModel = new DefaultListModel<>();
         JList<String> alarmList = new JList<>(alarmListModel);
         JScrollPane alarmScrollPane = new JScrollPane(alarmList);
@@ -179,6 +181,7 @@ public class MainTab extends JTabbedPane {
         alarmTab.add(addAlarmButton);
         alarmTab.add(removeAlarmButton);
         alarmTab.add(clearAllButton);
+         alarmTab.add(activeAlarmsLabel);
         alarmTab.add(alarmScrollPane);
 
         // metod så att det står t.ex Mon 00:00:00 ist för 1 00:00:00
@@ -191,7 +194,7 @@ public class MainTab extends JTabbedPane {
         // Lyssnare
         // Lägg till alarm
         addAlarmButton.addActionListener(e -> {
-            int day = (int) daySpinner.getValue() - 1;
+            int day = (int) daySpinner.getValue() - 1;  //hämtar tiden för nya alarmet
             int hour = (int) hourSpinner.getValue();
             int minute = (int) minuteSpinner.getValue();
             int second = (int) secondSpinner.getValue();
@@ -199,15 +202,15 @@ public class MainTab extends JTabbedPane {
             TimeType alarmTime = new Time(day, hour, minute, second);
             controller.addAlarm(alarmTime);
 
-            String alarmText = formatAlarmText.apply(alarmTime);
-            if (!alarmListModel.contains(alarmText)) {
-                alarmListModel.addElement(alarmText);
+              String alarmText = formatAlarmText.apply(alarmTime);
+            if (!alarmListModel.contains(alarmText)) { //kollar att ett larm på samma sekund inte finns redan
+                alarmListModel.addElement(alarmText); //lägg till alarmet i aktiva alarm
             }
         });
 
         // Ta bort specifikt alarm via popup
         removeAlarmButton.addActionListener(e -> {
-            if (alarmListModel.isEmpty()) {
+            if (alarmListModel.isEmpty()) { // om inga aktiva alarm finns
                 JOptionPane.showMessageDialog(null, "No alarms to remove.", "Info", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -218,12 +221,11 @@ public class MainTab extends JTabbedPane {
                 String selectedAlarm = selected.toString();
                 alarmListModel.removeElement(selectedAlarm);
 
-                // Parsar tillbaka till TimeType för att ta bort korrekt alarm
-                // Parsar tillbaka till TimeType genom att jämföra med alla alarm
-                for (AlarmType alarm : controller.getAlarms()) {
-                    String alarmText = formatAlarmText.apply(alarm.getTime());
-                    if (alarmText.equals(selectedAlarm)) {
-                        controller.removeAlarm(alarm.getTime());
+               // Parsar tillbaka till TimeType för att ta bort korrekt alarm
+                for (AlarmType alarm : controller.getAlarms()) { // går igneom alla alarm
+                    String alarmText = formatAlarmText.apply(alarm.getTime()); // formaterar om så att allt är i samma format
+                    if (alarmText.equals(selectedAlarm)) { // hittar det larm användaren valt
+                        controller.removeAlarm(alarm.getTime()); 
                         break;
                     }
                 }
