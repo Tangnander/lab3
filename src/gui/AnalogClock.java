@@ -16,7 +16,7 @@ public class AnalogClock extends JPanel {
         Graphics2D graphics2D = (Graphics2D) g.create();
 
         //Sets the color of the clock.
-        graphics2D.setColor(Color.WHITE); //Changing the opacity makes the arms stay after drawing the next
+        graphics2D.setColor(Color.WHITE);
         graphics2D.fillRect(0, 0, 600, 600);
         graphics2D.setColor(Color.BLACK);
         graphics2D.translate(300, 300);
@@ -27,6 +27,7 @@ public class AnalogClock extends JPanel {
             graphics2D.drawLine(0, -260, 0, -300);
             graphics2D.rotate(Math.PI / 6);
         }
+
         //Draws seconds arm.
         graphics2D.rotate(seconds * Math.PI / 30);
         graphics2D.setStroke(new BasicStroke(3));

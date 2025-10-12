@@ -67,7 +67,7 @@ public class MainTab extends JTabbedPane {
         analogWeekDay.setVisible(false);
         analogClock.setVisible(false);
 
-        //Clicking on the digital hides it and shows the analog instead
+        //Clicking on the digital clock hides it and shows the analog instead
         currentTime.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

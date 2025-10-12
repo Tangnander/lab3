@@ -84,7 +84,7 @@ public class ClockController {
 
             TimeType timeSplit = alarmClock.getTime();
 
-            //Resets the analog clock and updates it on MainTab.
+            //Sets the analog clock to current time and updates it on MainTab.
             AnalogClock.days = timeSplit.getDay();
             AnalogClock.hours = timeSplit.getHour();
             AnalogClock.minutes = timeSplit.getMinute();
